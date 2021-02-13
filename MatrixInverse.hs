@@ -1,8 +1,50 @@
+module MatrixInverse where
 
+import Data.Char
+import Data.List (transpose)
 
 type Matrix = [[Rational]]
 
+uniform :: [Int] -> Bool
+-- Make edge case  for empty list!
+uniform [] = True
+uniform (x:xs)= all (==x) (x:xs)
 
+uniform' :: [Int] -> Bool
+uniform' (x:xs) = foldr (&&) True (map (==x) xs)
+
+-- b.
+valid :: Matrix -> Bool
+valid [] = False
+valid mat@(m:_)
+     | length  mat >0 = uniform ([length row | row <- mat]) && (length m) /=0 
+     | otherwise = False
+
+
+-- 6.
+matrixWidth :: Matrix -> Int
+matrixWidth m = length (transpose m)
+
+matrixHeight :: Matrix -> Int
+matrixHeight m = length m
+
+plusM :: Matrix -> Matrix -> Matrix
+plusM m1 m2
+    | valid m1 && valid m2 && (matrixWidth m1 ==matrixWidth m2) && (matrixHeight m1 == matrixHeight m2)= zipWith (plusRow) m1 m2
+    |otherwise = error "Not compatible" where
+    plusRow :: [Rational] -> [Rational] -> [Rational]
+    plusRow x y = zipWith (+) x y 
+
+-- 7.
+timesM :: Matrix -> Matrix -> Matrix
+timesM [] _ = []
+timesM str@(m:m1) m2  
+    | matrixWidth str == matrixHeight m2 = dotProduct m (transpose m2) : timesM m1 m2 
+    | otherwise = error "Not Compatible"
+
+
+dotProduct :: [Rational] -> Matrix -> [Rational]
+dotProduct m  = foldr (\colm2 acc -> sum(map (uncurry (*)) (zip m colm2)) :acc) []
 -- Mapping functions
 mapMatrix :: (a -> b) -> [[a]] -> [[b]]
 mapMatrix f m1= map (map f)  m1
