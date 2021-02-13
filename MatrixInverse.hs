@@ -1,3 +1,8 @@
+
+
+type Matrix = [[Rational]]
+
+
 -- Mapping functions
 mapMatrix :: (a -> b) -> [[a]] -> [[b]]
 mapMatrix f m1= map (map f)  m1
